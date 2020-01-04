@@ -58,11 +58,11 @@ class ViewController: UIViewController {
         let ac = UIAlertController(title: "Set Up Goal Type", message: "Do you want to increase or decrease this behavior?", preferredStyle: .alert)
         
         let increaseAction = UIAlertAction(title: "Increase", style: .default) { (action) in
-            self.goalType = "More Than"
+            self.goalType = "or more"
             self.setupGoal()
         }
         let decreaseAction = UIAlertAction(title: "Decrease", style: .default) { (action) in
-            self.goalType = "Less Than"
+            self.goalType = "or less"
             self.setupGoal()
         }
         
@@ -72,7 +72,7 @@ class ViewController: UIViewController {
     }
     
     func setupGoal() {
-        let ac = UIAlertController(title: "Set Up Goal", message: "What is your goal count?", preferredStyle: .alert)
+        let ac = UIAlertController(title: "Set Up Goal", message: "What is your count goal?", preferredStyle: .alert)
         ac.addTextField(configurationHandler: nil)
         
         let submitAction = UIAlertAction(title: "Submit", style: .default) { (action) in
@@ -81,7 +81,7 @@ class ViewController: UIViewController {
             
             // Set initial label text
             self.behaviorLabel.text = self.behavior
-            self.goalLabel.text = "\(self.goalType) \(self.goal) Times"
+            self.goalLabel.text = "\(self.goal) \(self.goalType) times"
             self.countLabel.text = "\(self.count)"
         }
         
@@ -117,7 +117,7 @@ class ViewController: UIViewController {
     }
     
     @objc func reviseGoal() {
-        let ac = UIAlertController(title: "Revise Goal", message: "What is your new goal count?", preferredStyle: .alert)
+        let ac = UIAlertController(title: "Revise Goal", message: "What is your new count goal?", preferredStyle: .alert)
         ac.addTextField(configurationHandler: nil)
         
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
@@ -126,7 +126,7 @@ class ViewController: UIViewController {
             self.goal = Int(description) ?? 0  // Assign default value if invalid input
             self.count = 0
             
-            self.goalLabel.text = "\(self.goalType) \(self.goal) Times"
+            self.goalLabel.text = "\(self.goal) \(self.goalType) times"
             self.countLabel.text = "\(self.count)"
         }
         
