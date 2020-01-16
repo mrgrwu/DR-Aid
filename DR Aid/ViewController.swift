@@ -14,10 +14,30 @@ class ViewController: UIViewController {
     @IBOutlet var goalLabel: UILabel!
     @IBOutlet var countLabel: UILabel!
     
-    var behavior: String = "(Behavior)"
-    var goalType: String = ""
-    var goal: Int = 0
-    var count: Int = 0
+    // Set up User Defaults and property observers to store data for variables
+    
+    let defaults = UserDefaults.standard
+    
+    var behavior: String = "" {
+        didSet {
+            defaults.set(behavior, forKey: "Behavior")
+        }
+    }
+    var goalType: String = "" {
+        didSet {
+            defaults.set(goalType, forKey: "GoalType")
+        }
+    }
+    var goal: Int = 0 {
+        didSet {
+            defaults.set(goal, forKey: "Goal")
+        }
+    }
+    var count: Int = 0 {
+        didSet {
+            defaults.set(count, forKey: "Count")
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,7 +54,20 @@ class ViewController: UIViewController {
         toolbarItems = [resetButton, spacer, reviseButton]  // Set toolbar items array property
         navigationController?.isToolbarHidden = false  // Show toolbar
         
-        setupBehavior()
+        // Read User Defaults data for variables if it exists
+        if let description = defaults.object(forKey: "Behavior") as? String {
+            behavior = description
+            goalType = defaults.object(forKey: "GoalType") as? String ?? ""
+            goal = defaults.integer(forKey: "Goal")
+            count = defaults.integer(forKey: "Count")
+            
+            // Set initial label text
+            behaviorLabel.text = behavior
+            goalLabel.text = "\(goal) \(goalType) times"
+            countLabel.text = "\(count)"
+        } else {
+            setupBehavior()
+        }
     }
     
     func setupBehavior() {
@@ -46,6 +79,8 @@ class ViewController: UIViewController {
             guard let description = ac.textFields?[0].text else { return }  // Safely unwrap optional text field
             if description != "" {  // If text field was not an empty string:
                 self.behavior = description
+            } else {
+                self.behavior = "(Behavior)"
             }
             self.setupGoalType()
         }
@@ -106,7 +141,7 @@ class ViewController: UIViewController {
         
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         let resetAction = UIAlertAction(title: "Reset", style: .destructive) { (action) in
-            self.behavior = "(Behavior)"
+            self.behavior = ""
             self.count = 0
             self.setupBehavior()
         }
