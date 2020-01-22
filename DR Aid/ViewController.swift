@@ -61,10 +61,11 @@ class ViewController: UIViewController {
             goal = defaults.integer(forKey: "Goal")
             count = defaults.integer(forKey: "Count")
             
-            // Set initial label text
+            // Set initial label text and/or color
             behaviorLabel.text = behavior
             goalLabel.text = "\(goal) \(goalType) times"
             countLabel.text = "\(count)"
+            updateCountLabelColor()
         } else {
             setupBehavior()
         }
@@ -108,7 +109,9 @@ class ViewController: UIViewController {
     
     func setupGoal() {
         let ac = UIAlertController(title: "Set Up Goal", message: "What is your count goal?", preferredStyle: .alert)
-        ac.addTextField(configurationHandler: nil)
+        ac.addTextField { (textField) in
+            textField.keyboardType = .numberPad
+        }
         
         let submitAction = UIAlertAction(title: "Submit", style: .default) { (action) in
             guard let description = ac.textFields?[0].text else { return }  // Safely unwrap optional text field
@@ -127,12 +130,29 @@ class ViewController: UIViewController {
     @IBAction func increaseCount(_ sender: UIButton) {
         count += 1
         countLabel.text = "\(count)"
+        
+        updateCountLabelColor()
     }
     
     @IBAction func decreaseCount(_ sender: UIButton) {
         if count > 0 {
             count -= 1
             countLabel.text = "\(count)"
+        }
+        
+        updateCountLabelColor()
+    }
+    
+    // Change color of count label in relation to goal
+    func updateCountLabelColor() {
+        if count < goal {
+            countLabel.backgroundColor = UIColor(red: 23/255, green: 148/255, blue: 1, alpha: 1)
+        } else if (goalType == "or more") && (count == goal) {
+            countLabel.backgroundColor = .systemGreen
+        } else if (goalType == "or less") && (count == goal) {
+            countLabel.backgroundColor = .systemYellow
+        } else if (goalType == "or less") && (count > goal) {
+            countLabel.backgroundColor = .systemRed
         }
     }
     
@@ -153,7 +173,9 @@ class ViewController: UIViewController {
     
     @objc func reviseGoal() {
         let ac = UIAlertController(title: "Revise Goal", message: "What is your new count goal?", preferredStyle: .alert)
-        ac.addTextField(configurationHandler: nil)
+        ac.addTextField { (textField) in
+            textField.keyboardType = .numberPad
+        }
         
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         let reviseAction = UIAlertAction(title: "Revise", style: .default) { (action) in
