@@ -15,7 +15,6 @@ class ViewController: UIViewController {
     @IBOutlet var countLabel: UILabel!
     
     // Set up User Defaults and property observers to store data for variables
-    
     let defaults = UserDefaults.standard
     
     var behavior: String = "" {
@@ -115,12 +114,13 @@ class ViewController: UIViewController {
         
         let submitAction = UIAlertAction(title: "Submit", style: .default) { (action) in
             guard let description = ac.textFields?[0].text else { return }  // Safely unwrap optional text field
-            self.goal = Int(description) ?? 0  // Assign default value if invalid input
+            self.goal = Int(description) ?? 1  // Assign default value if invalid input
             
-            // Set initial label text
+            // Set initial label text and/or color
             self.behaviorLabel.text = self.behavior
             self.goalLabel.text = "\(self.goal) \(self.goalType) times"
             self.countLabel.text = "\(self.count)"
+            self.updateCountLabelColor()
         }
         
         ac.addAction(submitAction)
@@ -145,13 +145,15 @@ class ViewController: UIViewController {
     
     // Change color of count label in relation to goal
     func updateCountLabelColor() {
-        if count < goal {
+        if (count < goal) && (goalType == "or more") {
             countLabel.backgroundColor = UIColor(red: 23/255, green: 148/255, blue: 1, alpha: 1)
-        } else if (goalType == "or more") && (count == goal) {
+        } else if (count < (goal - 1)) && (goalType == "or less") {
             countLabel.backgroundColor = .systemGreen
-        } else if (goalType == "or less") && (count == goal) {
+        } else if (count == goal) && (goalType == "or more") {
+            countLabel.backgroundColor = .systemGreen
+        } else if ((count == goal - 1) || (count == goal)) && (goalType == "or less") {
             countLabel.backgroundColor = .systemYellow
-        } else if (goalType == "or less") && (count > goal) {
+        } else if (count > goal) && (goalType == "or less") {
             countLabel.backgroundColor = .systemRed
         }
     }
@@ -163,6 +165,7 @@ class ViewController: UIViewController {
         let resetAction = UIAlertAction(title: "Reset", style: .destructive) { (action) in
             self.behavior = ""
             self.count = 0
+            self.updateCountLabelColor()
             self.setupBehavior()
         }
         
@@ -180,11 +183,12 @@ class ViewController: UIViewController {
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         let reviseAction = UIAlertAction(title: "Revise", style: .default) { (action) in
             guard let description = ac.textFields?[0].text else { return }  // Safely unwrap optional text field
-            self.goal = Int(description) ?? 0  // Assign default value if invalid input
+            self.goal = Int(description) ?? 1  // Assign default value if invalid input
             self.count = 0
             
             self.goalLabel.text = "\(self.goal) \(self.goalType) times"
             self.countLabel.text = "\(self.count)"
+            self.updateCountLabelColor()
         }
         
         ac.addAction(cancelAction)
